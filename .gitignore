@@ -4,7 +4,6 @@ target/
 *.swo
 *~
 .DS_Store
-data/*.sqlite
 public/uploads/thumbnails/*
 public/uploads/backdrops/*
 public/uploads/settings/*
