@@ -23,6 +23,16 @@ pub struct AppState {
 async fn main() {
     let cfg = config::Config::from_env();
 
+    // Create database file + directory if missing (sqlx can't create files)
+    let db_path = cfg.database_url.strip_prefix("sqlite:").unwrap_or("data/database.sqlite");
+    let p = std::path::Path::new(db_path);
+    if let Some(parent) = p.parent() {
+        let _ = std::fs::create_dir_all(parent);
+    }
+    if !p.exists() {
+        let _ = std::fs::File::create(p);
+    }
+
     let db = SqlitePoolOptions::new()
         .max_connections(5)
         .connect(&cfg.database_url)

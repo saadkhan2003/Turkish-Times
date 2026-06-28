@@ -14,6 +14,6 @@ EXPOSE 8000
 
 ENV PORT=8000
 ENV APP_URL=http://localhost:8000
-ENV DATABASE_URL=sqlite:data/database.sqlite?mode=rwc
+ENV DATABASE_URL=sqlite:data/database.sqlite
 
 CMD ["./turkish-times"]
