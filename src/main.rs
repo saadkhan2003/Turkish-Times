@@ -24,14 +24,16 @@ async fn main() {
     let cfg = config::Config::from_env();
 
     // Ensure database file exists (SQLite needs O_CREAT, sqlx doesn't add it)
-    if let Some(path) = cfg.database_url.strip_prefix("sqlite:") {
-        let p = std::path::Path::new(path);
-        if let Some(parent) = p.parent() {
-            let _ = std::fs::create_dir_all(parent);
-        }
-        if !p.exists() {
-            let _ = std::fs::File::create(p).map(|f| drop(f));
-        }
+    let db_path = cfg.database_url
+        .strip_prefix("sqlite://").or_else(|| cfg.database_url.strip_prefix("sqlite:"))
+        .and_then(|s| s.split('?').next())
+        .unwrap_or("data/database.sqlite");
+    let p = std::path::Path::new(db_path);
+    if let Some(parent) = p.parent() {
+        let _ = std::fs::create_dir_all(parent);
+    }
+    if !p.exists() {
+        let _ = std::fs::File::create(p).map(|f| drop(f));
     }
 
     let db = SqlitePoolOptions::new()
