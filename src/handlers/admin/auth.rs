@@ -36,7 +36,7 @@ pub async fn login(
     let mut headers = HeaderMap::new();
     let admin = sqlx::query_as::<_, crate::models::Admin>(
         "SELECT * FROM admins WHERE username = ?",
-    ).bind(&form.username).fetch_optional(&state.db).await.unwrap();
+    ).bind(&form.username).fetch_optional(&state.db).await.unwrap_or(None);
 
     match admin {
         Some(a) if bcrypt::verify(&form.password, &a.password).unwrap_or(false) => {

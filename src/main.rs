@@ -34,7 +34,9 @@ async fn main() {
     for statement in migration_sql.split(';') {
         let s = statement.trim();
         if !s.is_empty() {
-            sqlx::query(s).execute(&db).await.unwrap_or_default();
+            if let Err(e) = sqlx::query(s).execute(&db).await {
+                eprintln!("⚠️ Migration error: {}", e);
+            }
         }
     }
 
