@@ -10,12 +10,10 @@ COPY target/release/turkish-times /app/
 COPY templates/ /app/templates/
 COPY public/ /app/public/
 
-RUN mkdir -p data public/uploads
-
 EXPOSE 8000
 
 ENV PORT=8000
 ENV APP_URL=http://localhost:8000
 ENV DATABASE_URL=sqlite:data/database.sqlite
 
-CMD ["sh", "-c", "mkdir -p data public/uploads && exec ./turkish-times"]
+CMD ["./turkish-times"]

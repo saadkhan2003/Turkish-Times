@@ -23,6 +23,13 @@ pub struct AppState {
 async fn main() {
     let cfg = config::Config::from_env();
 
+    // Ensure data directory exists (Docker volume may be empty)
+    if let Some(path) = cfg.database_url.strip_prefix("sqlite:") {
+        if let Some(parent) = std::path::Path::new(path).parent() {
+            let _ = std::fs::create_dir_all(parent);
+        }
+    }
+
     let db = SqlitePoolOptions::new()
         .max_connections(5)
         .connect(&cfg.database_url)
