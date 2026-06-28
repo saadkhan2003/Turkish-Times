@@ -4,6 +4,9 @@ target/
 *.swo
 *~
 .DS_Store
+data/*.sqlite
+data/*.sqlite-wal
+data/*.sqlite-shm
 public/uploads/thumbnails/*
 public/uploads/backdrops/*
 public/uploads/settings/*

@@ -23,33 +23,20 @@ pub struct AppState {
 async fn main() {
     let cfg = config::Config::from_env();
 
-    // Create database file if missing (sqlx doesn't add O_CREAT)
-    let db_path = cfg.database_url.strip_prefix("sqlite:").unwrap_or("data/database.sqlite");
-    let p = std::path::Path::new(db_path);
-    if let Some(parent) = p.parent() {
-        let _ = std::fs::create_dir_all(parent);
-    }
-    if !p.exists() {
-        let _ = std::fs::File::create(p);
-    }
-
     let db = SqlitePoolOptions::new()
         .max_connections(5)
         .connect(&cfg.database_url)
         .await
         .expect("Failed to connect to database");
 
-    let template_dir = std::env::var("TEMPLATE_DIR").unwrap_or_else(|_| "templates".to_string());
-    let pattern = format!("{}/**/*.html", template_dir);
-    let mut tera = tera::Tera::new(&pattern).expect("Failed to load templates");
-    tera.autoescape_on(Vec::new());
-    tera.register_filter("round", |v: &tera::Value, _: &std::collections::HashMap<String, tera::Value>| {
-        Ok(tera::to_value(v.as_f64().map(|f| f.round()).unwrap_or(0.0)).unwrap())
-    });
-    tera.register_filter("from_json", |v: &tera::Value, _: &std::collections::HashMap<String, tera::Value>| {
-        let s = v.as_str().unwrap_or("[]");
-        Ok(serde_json::from_str::<tera::Value>(s).unwrap_or(tera::Value::Array(vec![])))
-    });
+    // Run migrations
+    let migration_sql = include_str!("../migrations/001_schema.sql");
+    for statement in migration_sql.split(';') {
+        let s = statement.trim();
+        if !s.is_empty() {
+            sqlx::query(s).execute(&db).await.unwrap_or_default();
+        }
+    }
 
     // Auto-create admin account if none exists
     let admin_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM admins")
