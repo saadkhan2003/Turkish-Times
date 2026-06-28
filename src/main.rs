@@ -23,10 +23,14 @@ pub struct AppState {
 async fn main() {
     let cfg = config::Config::from_env();
 
-    // Ensure data directory exists (Docker volume may be empty)
+    // Ensure database file exists (SQLite needs O_CREAT, sqlx doesn't add it)
     if let Some(path) = cfg.database_url.strip_prefix("sqlite:") {
-        if let Some(parent) = std::path::Path::new(path).parent() {
+        let p = std::path::Path::new(path);
+        if let Some(parent) = p.parent() {
             let _ = std::fs::create_dir_all(parent);
+        }
+        if !p.exists() {
+            let _ = std::fs::File::create(p).map(|f| drop(f));
         }
     }
 
