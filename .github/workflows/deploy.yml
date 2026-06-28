@@ -22,8 +22,7 @@ jobs:
       - name: Build Rust binary
         run: cargo build --release
       
-      - name: Set up 
-      Buildx
+      - name: Set up Buildx
         uses: docker/setup-buildx-action@v3
 
       - name: Log in to GitHub Container Registry
