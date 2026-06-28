@@ -18,4 +18,4 @@ ENV PORT=8000
 ENV APP_URL=http://localhost:8000
 ENV DATABASE_URL=sqlite:data/database.sqlite
 
-CMD ["./turkish-times"]
+CMD ["sh", "-c", "mkdir -p data public/uploads && exec ./turkish-times"]
