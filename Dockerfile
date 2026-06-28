@@ -1,3 +1,14 @@
+# Stage 1: Build Rust binary
+FROM rust:bookworm AS builder
+
+WORKDIR /app
+COPY Cargo.toml Cargo.lock ./
+COPY src/ ./src/
+COPY migrations/ ./migrations/
+
+RUN cargo build --release
+
+# Stage 2: Runtime image
 FROM debian:bookworm-slim
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -6,7 +17,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /app
 
-COPY target/release/turkish-times /app/
+COPY --from=builder /app/target/release/turkish-times /app/
 COPY templates/ /app/templates/
 COPY public/ /app/public/
 

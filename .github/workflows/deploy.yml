@@ -5,9 +5,6 @@ on:
     branches: [main]
   workflow_dispatch:
 
-env:
-  REGISTRY: ghcr.io
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -22,16 +19,10 @@ jobs:
         run: |
           echo "IMAGE_LOWER=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
 
-      - name: Build Rust binary
-        run: cargo build --release
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
         with:
-          registry: ${{ env.REGISTRY }}
+          registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
@@ -43,12 +34,3 @@ jobs:
           tags: |
             ghcr.io/${{ env.IMAGE_LOWER }}:latest
             ghcr.io/${{ env.IMAGE_LOWER }}:${{ github.sha }}
-
-      - name: Trigger Dokploy deploy
-        env:
-          WEBHOOK: ${{ secrets.DOKPLOY_WEBHOOK_URL }}
-        run: |
-          if [ -n "$WEBHOOK" ]; then
-            curl -X POST "$WEBHOOK" -H "Content-Type: application/json" \
-              -d '{"image": "ghcr.io/${{ env.IMAGE_LOWER }}:latest"}'
-          fi
