@@ -41,6 +41,17 @@ async fn main() {
         Ok(serde_json::from_str::<tera::Value>(s).unwrap_or(tera::Value::Array(vec![])))
     });
 
+    // Auto-create admin account if none exists
+    let admin_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM admins")
+        .fetch_one(&db).await.unwrap_or(0);
+    if admin_count == 0 {
+        let hash = bcrypt::hash("admin123", 12).unwrap_or_default();
+        sqlx::query("INSERT INTO admins (username, password, name, email, created_at, updated_at) VALUES (?, ?, ?, ?, datetime('now'), datetime('now'))")
+            .bind("admin").bind(&hash).bind("Administrator").bind("admin@turkishtimes.com")
+            .execute(&db).await.unwrap_or_default();
+        println!("✅ Created default admin: admin / admin123");
+    }
+
     let state = Arc::new(AppState { db, tera, config: cfg });
 
     let frontend = Router::new()
