@@ -49,6 +49,19 @@ async fn main() {
         println!("✅ Created default admin: admin / admin123");
     }
 
+    // Load templates
+    let template_dir = std::env::var("TEMPLATE_DIR").unwrap_or_else(|_| "templates".to_string());
+    let pattern = format!("{}/**/*.html", template_dir);
+    let mut tera = tera::Tera::new(&pattern).expect("Failed to load templates");
+    tera.autoescape_on(Vec::new());
+    tera.register_filter("round", |v: &tera::Value, _: &std::collections::HashMap<String, tera::Value>| {
+        Ok(tera::to_value(v.as_f64().map(|f| f.round()).unwrap_or(0.0)).unwrap())
+    });
+    tera.register_filter("from_json", |v: &tera::Value, _: &std::collections::HashMap<String, tera::Value>| {
+        let s = v.as_str().unwrap_or("[]");
+        Ok(serde_json::from_str::<tera::Value>(s).unwrap_or(tera::Value::Array(vec![])))
+    });
+
     let state = Arc::new(AppState { db, tera, config: cfg });
 
     let frontend = Router::new()
