@@ -1,0 +1,118 @@
+{% extends "frontend/layouts/app.html" %}
+{% block title %}{{ series.title }} - Turkish Times{% endblock %}
+{% block content %}
+<div class="relative h-[70vh] w-full overflow-hidden">
+    <div class="absolute inset-0">
+        {% if series.backdrop %}
+        <img src="{{ app_url }}/uploads/backdrops/{{ series.backdrop }}" class="w-full h-full object-cover blur-sm scale-110 opacity-50">
+        {% elif series.thumbnail %}
+        <img src="{{ app_url }}/uploads/thumbnails/{{ series.thumbnail }}" class="w-full h-full object-cover blur-sm scale-110 opacity-50">
+        {% else %}
+        <div class="w-full h-full bg-turkish-dark"></div>
+        {% endif %}
+        <div class="absolute inset-0 bg-gradient-to-t from-[#050507] via-[#050507]/80 to-transparent"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-[#050507] via-[#050507]/60 to-transparent"></div>
+    </div>
+    <div class="relative container mx-auto px-4 h-full flex items-end pb-12 z-10">
+        <div class="flex flex-col md:flex-row gap-8 md:gap-12 items-end w-full">
+            <div class="hidden md:block w-64 flex-shrink-0 rounded-lg overflow-hidden shadow-2xl shadow-black/50 border border-white/10 transform translate-y-16">
+                {% if series.thumbnail %}<img src="{{ app_url }}/uploads/thumbnails/{{ series.thumbnail }}" class="w-full h-full object-cover">{% endif %}
+            </div>
+            <div class="flex-1 mb-8 md:mb-0">
+                <div class="flex items-center gap-3 mb-4">
+                    {% if series.status == "ongoing" %}
+                    <span class="px-3 py-1 bg-green-500/20 text-green-400 border border-green-500/30 text-xs font-bold uppercase tracking-wider rounded-sm">Ongoing</span>
+                    {% else %}
+                    <span class="px-3 py-1 bg-turkish-gold/20 text-turkish-gold border border-turkish-gold/30 text-xs font-bold uppercase tracking-wider rounded-sm">Completed</span>
+                    {% endif %}
+                    <span class="text-gray-400 text-sm font-medium">{{ series.year }}</span>
+                </div>
+                <h1 class="text-4xl md:text-6xl font-bold text-white mb-4 leading-tight drop-shadow-xl font-serif">{{ series.title }}</h1>
+                <div class="flex flex-wrap items-center gap-6 text-gray-300 text-sm font-medium mb-8">
+                    <span class="flex items-center gap-2"><i class="fas fa-layer-group text-turkish-red"></i> {{ seasons | length }} Seasons</span>
+                    <span class="flex items-center gap-2"><i class="fas fa-eye text-turkish-red"></i> {{ series.views | default(value=0) }} Views</span>
+                </div>
+                <div class="flex flex-wrap gap-4">
+                    {% if seasons | length > 0 %}
+                    <a href="/watch/{{ episodes_first_id | default(value=1) }}" class="px-8 py-3.5 bg-turkish-red text-white rounded-lg font-bold tracking-wide hover:bg-red-700 transition transform hover:scale-105 flex items-center gap-3 shadow-lg shadow-red-900/20">
+                        <i class="fas fa-play"></i>START WATCHING</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container mx-auto px-4 py-12">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+        <div class="lg:col-span-2 space-y-12">
+            <section>
+                <h3 class="text-xl font-bold text-white mb-4 font-serif border-l-4 border-turkish-red pl-4">Synopsis</h3>
+                <p class="text-gray-300 text-lg leading-relaxed font-light">{{ series.description }}</p>
+                {% set genre_list = series.genres | from_json %}
+                <div class="flex flex-wrap gap-2 mt-6">
+                    {% for g in genre_list %}
+                    <a href="/genre/{{ g }}" class="px-4 py-1.5 bg-turkish-charcoal border border-white/5 rounded-full text-sm text-gray-400 hover:text-turkish-gold hover:border-turkish-gold/30 transition">{{ g }}</a>
+                    {% endfor %}
+                </div>
+            </section>
+            <section>
+                <h3 class="text-xl font-bold text-white mb-6 font-serif border-l-4 border-turkish-red pl-4">Episodes</h3>
+                <div class="space-y-4">
+                    {% for season in seasons %}
+                    <div class="border border-white/5 rounded-xl overflow-hidden bg-turkish-charcoal/50">
+                        <div class="flex items-center justify-between p-5 bg-white/5">
+                            <div class="flex items-center gap-4">
+                                <h4 class="text-lg font-bold text-white">{{ season.title | default(value="Season " ~ season.season_number) }}</h4>
+                                <span class="text-sm text-gray-400">{{ episodes | length }} Episodes</span>
+                            </div>
+                        </div>
+                        <div class="divide-y divide-white/5">
+                            {% for ep in episodes %}
+                            {% if ep.season_id == season.id %}
+                            <a href="/watch/{{ ep.id }}" class="flex items-center gap-4 p-4 hover:bg-white/5 transition group">
+                                <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 font-bold text-sm group-hover:bg-turkish-red group-hover:text-white transition">{{ ep.episode_number }}</div>
+                                <div class="flex-1">
+                                    <h5 class="text-gray-200 font-medium group-hover:text-turkish-gold transition">{{ ep.title }}</h5>
+                                    {% if ep.duration %}<p class="text-xs text-gray-500">{{ ep.duration }} min</p>{% endif %}
+                                </div>
+                                <div class="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+                                    <i class="fas fa-play text-xs text-white"></i>
+                                </div>
+                            </a>
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-12 bg-turkish-charcoal rounded-xl border border-white/5"><p class="text-gray-400">No episodes available yet.</p></div>
+                    {% endfor %}
+                </div>
+            </section>
+        </div>
+        <div class="lg:col-span-1">
+            <div class="sticky top-24">
+                <h3 class="text-xl font-bold text-white mb-6 font-serif border-l-4 border-turkish-red pl-4">You May Also Like</h3>
+                <div class="space-y-4">
+                    {% for related in related_series %}
+                    <a href="/series/{{ related.slug }}" class="flex gap-4 group p-3 rounded-lg hover:bg-white/5 transition">
+                        <div class="w-20 aspect-[2/3] rounded overflow-hidden flex-shrink-0">
+                            {% if related.thumbnail %}
+                            <img src="{{ app_url }}/uploads/thumbnails/{{ related.thumbnail }}" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                            {% else %}
+                            <div class="w-full h-full bg-turkish-charcoal"></div>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <h4 class="text-white font-medium leading-tight mb-1 group-hover:text-turkish-gold transition">{{ related.title }}</h4>
+                            <div class="text-xs text-gray-500 mb-1">{{ related.year }}</div>
+                            {% set related_genres = related.genres | from_json %}
+                            <span class="text-xs px-2 py-0.5 bg-white/10 rounded text-gray-300">{{ related_genres[0] | default(value="Historical") }}</span>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

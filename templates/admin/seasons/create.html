@@ -1,0 +1,39 @@
+{% extends "admin/layouts/app.html" %}
+{% block title %}Add Season - Admin{% endblock %}
+{% block content %}
+<div class="max-w-xl mx-auto">
+    <a href="/admin/seasons" class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 text-sm mb-4 inline-block transition">
+        <i class="fas fa-arrow-left mr-1"></i>Back to Seasons
+    </a>
+    <h1 class="text-2xl font-bold text-gray-800 dark:text-white mb-6">Add New Season</h1>
+    <form method="POST" class="bg-white dark:bg-turkish-dark rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 space-y-6">
+        <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Series</label>
+            <select name="series_id" required class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-red-500 transition">
+                <option value="">Select Series</option>
+                {% for s in all_series %}
+                <option value="{{ s.id }}">{{ s.title }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Season Number</label>
+                <input type="number" name="season_number" min="1" required
+                       class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-red-500 transition">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Title (optional)</label>
+                <input type="text" name="title"
+                       class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-red-500 transition">
+            </div>
+        </div>
+        <div class="flex gap-4 pt-4 border-t border-gray-100 dark:border-gray-700">
+            <button type="submit" class="px-6 py-2.5 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition shadow-sm">
+                <i class="fas fa-save mr-2"></i>Save Season
+            </button>
+            <a href="/admin/seasons" class="px-6 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

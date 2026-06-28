@@ -1,0 +1,152 @@
+{% extends "admin/layouts/app.html" %}
+{% block title %}Add Episode - Admin{% endblock %}
+{% block content %}
+<div class="max-w-4xl">
+    <a href="/admin/episodes" class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 text-sm mb-4 inline-block transition">
+        <i class="fas fa-arrow-left mr-1"></i>Back to Episodes
+    </a>
+    <h1 class="text-2xl font-bold text-gray-800 dark:text-white mb-6">Add New Episode</h1>
+
+    <form method="POST" enctype="multipart/form-data">
+        <!-- Episode Information -->
+        <div class="bg-white dark:bg-turkish-dark rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 mb-6">
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-6">Episode Information</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Series <span class="text-red-500">*</span></label>
+                    <select id="series_select" required class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-red-500 focus:border-transparent transition">
+                        <option value="">Select a series</option>
+                        {% for s in all_series %}
+                        <option value="{{ s.id }}">{{ s.title }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Season <span class="text-red-500">*</span></label>
+                    <select name="season_id" id="season_id" required class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-red-500 focus:border-transparent transition">
+                        <option value="">Select series first</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Episode Number <span class="text-red-500">*</span></label>
+                    <input type="number" name="episode_number" value="1" min="1" required
+                           class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-red-500 focus:border-transparent transition">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Duration (minutes)</label>
+                    <input type="number" name="duration" min="1" placeholder="e.g., 120"
+                           class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-red-500 focus:border-transparent transition">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Title <span class="text-red-500">*</span></label>
+                    <input type="text" name="title" required placeholder="Episode title"
+                           class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-red-500 focus:border-transparent transition">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Description</label>
+                    <textarea name="description" rows="3" placeholder="Brief description of this episode..."
+                              class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-red-500 focus:border-transparent transition"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Video Sources -->
+        <div class="bg-white dark:bg-turkish-dark rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 mb-6">
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-6">Video Sources</h3>
+            <div class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Primary Video URL / Embed Code</label>
+                    <input type="text" name="video_source_primary" placeholder="URL or &lt;iframe...&gt; code"
+                           class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-red-500 focus:border-transparent transition">
+                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Supports: MP4 links, YouTube/Vimeo URLs, and raw Iframe embed codes</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Backup Video URL</label>
+                    <input type="url" name="video_source_backup" placeholder="https://backup.example.com/video.mp4"
+                           class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-red-500 focus:border-transparent transition">
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Download Link (Blu-Ray / 4K)</label>
+                            <input type="url" name="download_bluray" placeholder="Ultra High Quality"
+                                   class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-red-500 transition">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Size (e.g., 2.5 GB)</label>
+                            <input type="text" name="size_bluray" placeholder="Size"
+                                   class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-red-500 transition">
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Download Link (1080p)</label>
+                            <input type="url" name="download_link" placeholder="High Quality"
+                                   class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-red-500 transition">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Size (e.g., 1.2 GB)</label>
+                            <input type="text" name="size_1080p" placeholder="Size"
+                                   class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-red-500 transition">
+                        </div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Download Link (720p)</label>
+                            <input type="url" name="download_720p" placeholder="Medium Quality"
+                                   class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-red-500 transition">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Size (e.g., 800 MB)</label>
+                            <input type="text" name="size_720p" placeholder="Size"
+                                   class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-red-500 transition">
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Download Link (480p)</label>
+                            <input type="url" name="download_480p" placeholder="Low Quality"
+                                   class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-red-500 transition">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Size (e.g., 400 MB)</label>
+                            <input type="text" name="size_480p" placeholder="Size"
+                                   class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-red-500 transition">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Thumbnail -->
+        <div class="bg-white dark:bg-turkish-dark rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 mb-6">
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-6">Episode Thumbnail (Optional)</h3>
+            <input type="file" name="thumbnail" accept="image/*"
+                   class="block w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-red-600 file:text-white hover:file:bg-red-700 file:cursor-pointer transition">
+        </div>
+
+        <!-- Actions -->
+        <div class="flex items-center gap-4">
+            <button type="submit" class="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition flex items-center gap-2 shadow-sm">
+                <i class="fas fa-save"></i><span>Save Episode</span>
+            </button>
+            <a href="/admin/episodes" class="px-6 py-3 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition">Cancel</a>
+        </div>
+    </form>
+</div>
+<script>
+    const seasonsData = {{ seasons_json | safe }};
+    document.getElementById('series_select').addEventListener('change', function() {
+        const sid = this.value;
+        const sel = document.getElementById('season_id');
+        if (!sid) { sel.innerHTML = '<option value="">Select series first</option>'; return; }
+        let opts = '<option value="">Select a season</option>';
+        seasonsData.filter(s => s.series_id == sid).forEach(s => {
+            opts += `<option value="${s.id}">Season ${s.season_number}${s.title ? ' - ' + s.title : ''}</option>`;
+        });
+        sel.innerHTML = opts;
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "admin/layouts/app.html" %}
+{% block title %}Seasons - Admin{% endblock %}
+{% block content %}
+<div class="flex justify-between items-center mb-6">
+    <div><h1 class="text-2xl font-bold text-gray-800 dark:text-white">Seasons</h1><p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ seasons | length }} total</p></div>
+    <a href="/admin/seasons/create" class="bg-red-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-red-700 transition flex items-center gap-2"><i class="fas fa-plus"></i>Add Season</a>
+</div>
+<div class="bg-white dark:bg-turkish-dark rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+    <table class="w-full">
+        <thead><tr class="border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-left">
+            <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Season</th>
+            <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Series ID</th>
+            <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Title</th>
+            <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Actions</th>
+        </tr></thead>
+        <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+            {% for s in seasons %}
+            <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">Season {{ s.season_number }}</td>
+                <td class="px-6 py-4 text-gray-500 dark:text-gray-400">{{ s.series_id }}</td>
+                <td class="px-6 py-4 text-gray-700 dark:text-gray-300">{{ s.title | default(value="-") }}</td>
+                <td class="px-6 py-4">
+                    <a href="/admin/seasons/{{ s.id }}/edit" class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm mr-3"><i class="fas fa-edit"></i></a>
+                    <form method="POST" action="/admin/seasons/{{ s.id }}/delete" style="display:inline" onsubmit="return confirm('Delete this season?')">
+                        <button class="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 text-sm"><i class="fas fa-trash"></i></button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

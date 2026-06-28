@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="keywords" content="turkish series, ertugrul, osman, historical series, urdu subtitles, ottoman">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="Turkish Times">
+    <meta property="og:description" content="">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ app_url }}">
+    <meta property="og:image" content="{% block og_image %}{{ app_url }}/images/logo.png{% endblock %}">
+    <meta name="twitter:card" content="summary_large_image">
+    <title>{% block title %}Turkish Times - Watch Turkish Historical Series with Subtitles{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config={theme:{extend:{colors:{'turkish-red':'#E30A17','turkish-dark':'#0f1014','turkish-darker':'#050507','turkish-gold':'#C6A87C','turkish-gold-light':'#E5CFA6','turkish-gray':'#1E1E24','turkish-charcoal':'#13131A'},fontFamily:{sans:['Inter','sans-serif'],serif:['Cinzel','serif']}}}}
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="{{ app_url }}/images/favicon.png">
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <style>
+        :root{--plyr-color-main:#E30A17}
+        body{font-family:Inter,sans-serif;background-color:#050507;
+            background-image:radial-gradient(at 0% 0%,rgba(227,10,23,0.08)0px,transparent 50%),
+            radial-gradient(at 100% 0%,rgba(198,168,124,0.05)0px,transparent 50%);background-attachment:fixed}
+        h1,h2,h3,h4,h5,h6{font-family:Cinzel,serif}
+        ::-webkit-scrollbar{width:8px}
+        ::-webkit-scrollbar-track{background:#0f1014}
+        ::-webkit-scrollbar-thumb{background:#333;border-radius:4px}
+        ::-webkit-scrollbar-thumb:hover{background:#E30A17}
+        .series-card{transition:all .4s cubic-bezier(.175,.885,.32,1.275)}
+        .series-card:hover{transform:translateY(-8px) scale(1.02)}
+        .series-card:hover .series-overlay{opacity:1}
+        .series-card:hover .series-thumbnail{transform:scale(1.1)}
+        .glass{background:rgba(15,16,20,.85);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.05)}
+        .glass-card{background:rgba(30,30,36,.6);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.05)}
+        .gradient-text{background:linear-gradient(135deg,#E30A17 0%,#C6A87C 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .gold-text{background:linear-gradient(135deg,#E5CFA6 0%,#C6A87C 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .hero-gradient{background:linear-gradient(135deg,rgba(227,10,23,.3)0%,rgba(0,0,0,0)50%)}
+        .plyr--video{border-radius:16px;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,.5)}
+        .plyr__control--overlaid{background:#E30A17!important}
+        .plyr--video .plyr__control:hover{background:#b90812!important}
+        @keyframes gradient{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+        .animate-gradient{animation:gradient 6s ease infinite}
+        .swiper-pagination-bullet{background:white;opacity:.5;width:10px;height:10px;transition:all .3s}
+        .swiper-pagination-bullet-active{background:#E50914;opacity:1;width:24px;border-radius:5px}
+        .swiper-slide-active .opacity-0{opacity:1!important;transform:translateY(0)!important}
+    </style>
+</head>
+<body class="text-white min-h-screen">
+    <nav class="fixed top-0 left-0 right-0 z-50 glass">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <a href="/" class="flex items-center gap-3 group">
+                    <img src="{{ app_url }}/images/logo.png" alt="Turkish Times" class="h-16 w-auto object-contain group-hover:scale-110 transition duration-300">
+                </a>
+                <div class="hidden md:flex items-center gap-8">
+                    <a href="/" class="text-sm font-medium hover:text-turkish-red transition text-gray-300">Home</a>
+                    <a href="/series" class="text-sm font-medium hover:text-turkish-red transition text-gray-300">All Series</a>
+                    <a href="/series?status=ongoing" class="text-sm font-medium text-gray-300 hover:text-turkish-red transition">Ongoing</a>
+                    <a href="/series?status=completed" class="text-sm font-medium text-gray-300 hover:text-turkish-red transition">Completed</a>
+                </div>
+                <div class="flex items-center gap-4">
+                    <form action="/search" method="GET" class="relative hidden sm:block">
+                        <input type="text" name="q" value="{{ query | default(value='') }}"
+                               placeholder="Search series..."
+                               class="w-48 lg:w-64 pl-10 pr-4 py-2 bg-turkish-gray rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-turkish-red transition">
+                        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                    </form>
+                    <button id="mobile-menu-btn" class="md:hidden p-2 text-gray-300 hover:text-white transition">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden bg-turkish-darker/95 backdrop-blur-xl border-t border-white/10">
+            <div class="container mx-auto px-4 py-4 space-y-4">
+                <form action="/search" method="GET" class="relative">
+                    <input type="text" name="q" placeholder="Search series..."
+                           class="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/10 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-turkish-red transition text-white placeholder-gray-500">
+                    <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                </form>
+                <div class="flex flex-col space-y-2">
+                    <a href="/" class="px-4 py-3 rounded-lg hover:bg-white/5 text-gray-300 transition flex items-center gap-3"><i class="fas fa-home w-5"></i> Home</a>
+                    <a href="/series" class="px-4 py-3 rounded-lg hover:bg-white/5 text-gray-300 transition flex items-center gap-3"><i class="fas fa-film w-5"></i> All Series</a>
+                    <a href="/series?status=ongoing" class="px-4 py-3 rounded-lg hover:bg-white/5 text-gray-300 transition flex items-center gap-3"><i class="fas fa-clock w-5"></i> Ongoing</a>
+                    <a href="/series?status=completed" class="px-4 py-3 rounded-lg hover:bg-white/5 text-gray-300 transition flex items-center gap-3"><i class="fas fa-check-circle w-5"></i> Completed</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <main class="pt-20">
+        {% block content %}{% endblock %}
+    </main>
+    <footer class="bg-turkish-darker py-12 mt-16">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                <div class="md:col-span-2">
+                    <a href="/" class="flex items-center gap-3 mb-4 group">
+                        <img src="{{ app_url }}/images/logo.png" alt="Turkish Times" class="h-20 w-auto object-contain group-hover:scale-110 transition duration-300">
+                    </a>
+                    <p class="text-gray-400 text-sm leading-relaxed">Watch Turkish Historical Series with subtitles in Urdu, English, Arabic, and Turkish.</p>
+                </div>
+                <div><h4 class="font-semibold mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="/" class="hover:text-white transition">Home</a></li>
+                        <li><a href="/series" class="hover:text-white transition">All Series</a></li>
+                        <li><a href="/series?status=ongoing" class="hover:text-white transition">Ongoing Series</a></li>
+                        <li><a href="/series?status=completed" class="hover:text-white transition">Completed Series</a></li>
+                    </ul>
+                </div>
+                <div><h4 class="font-semibold mb-4">Popular Genres</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="/genre/Historical" class="hover:text-white transition">Historical</a></li>
+                        <li><a href="/genre/Drama" class="hover:text-white transition">Drama</a></li>
+                        <li><a href="/genre/Action" class="hover:text-white transition">Action</a></li>
+                        <li><a href="/genre/War" class="hover:text-white transition">War</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+                <p class="text-sm text-gray-500">&copy; 2026 Turkish Times. All rights reserved.</p>
+                <div class="flex items-center gap-4 text-gray-400">
+                    <a href="#" class="hover:text-white transition"><i class="fab fa-facebook text-lg"></i></a>
+                    <a href="#" class="hover:text-white transition"><i class="fab fa-twitter text-lg"></i></a>
+                    <a href="#" class="hover:text-white transition"><i class="fab fa-instagram text-lg"></i></a>
+                    <a href="#" class="hover:text-white transition"><i class="fab fa-youtube text-lg"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
+    <script>
+        const m=document.getElementById('mobile-menu-btn'),mm=document.getElementById('mobile-menu');
+        if(m&&mm)m.addEventListener('click',()=>{mm.classList.toggle('hidden');const i=m.querySelector('i');i.classList.toggle('fa-times');i.classList.toggle('fa-bars')});
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded',function(){
+            new Swiper('.hero-swiper',{effect:'fade',fadeEffect:{crossFade:true},speed:1000,autoplay:{delay:5000,disableOnInteraction:false},parallax:true,pagination:{el:'.swiper-pagination',clickable:true}});
+            new Swiper('.episodes-swiper',{slidesPerView:2,spaceBetween:16,breakpoints:{640:{slidesPerView:3,spaceBetween:20},768:{slidesPerView:4,spaceBetween:24},1024:{slidesPerView:5,spaceBetween:24},1280:{slidesPerView:4,spaceBetween:24}}});
+        });
+    </script>
+    <script src="//unpkg.com/alpinejs" defer></script>
+</body>
+</html>

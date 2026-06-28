@@ -1,0 +1,37 @@
+<a href="/series/{{ series.slug }}" class="group block relative">
+    <div class="relative aspect-[2/3] rounded-xl overflow-hidden bg-turkish-charcoal shadow-lg transition-all duration-500 group-hover:shadow-turkish-red/30 group-hover:shadow-2xl group-hover:-translate-y-3 ring-1 ring-white/5 group-hover:ring-turkish-red/30">
+        {% if series.thumbnail %}
+        <img src="{{ app_url }}/uploads/thumbnails/{{ series.thumbnail }}" alt="{{ series.title }}" class="w-full h-full object-cover transition duration-700 group-hover:scale-110">
+        {% else %}
+        <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-turkish-gray to-turkish-dark"><i class="fas fa-film text-4xl text-gray-700"></i></div>
+        {% endif %}
+        <div class="absolute top-3 right-3 z-20">
+            <span class="px-2 py-1 bg-black/70 backdrop-blur-md text-turkish-gold text-[10px] font-bold rounded flex items-center gap-1">
+                <i class="fas fa-star"></i>{{ series.rating | default(value=8.5) }}</span>
+        </div>
+        <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-70 group-hover:opacity-95 transition-opacity duration-500"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></div>
+        <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 z-10">
+            <div class="w-16 h-16 rounded-full bg-gradient-to-br from-turkish-red to-red-800 text-white flex items-center justify-center transform scale-50 group-hover:scale-100 transition-all duration-500 shadow-xl shadow-red-900/50 ring-2 ring-white/20">
+                <i class="fas fa-play text-xl ml-1"></i>
+            </div>
+        </div>
+        <div class="absolute top-3 left-3 z-20">
+            {% if series.status == "ongoing" %}
+            <span class="px-2.5 py-1 bg-gradient-to-r from-green-500 to-emerald-600 backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-wider rounded shadow-lg shadow-green-900/30 ring-1 ring-green-400/30">
+                <i class="fas fa-circle text-[6px] animate-pulse mr-1"></i>Ongoing</span>
+            {% else %}
+            <span class="px-2.5 py-1 bg-gradient-to-r from-turkish-gold to-amber-600 backdrop-blur-md text-black text-[10px] font-bold uppercase tracking-wider rounded shadow-lg shadow-amber-900/30 ring-1 ring-yellow-400/30">
+                <i class="fas fa-check-circle text-[8px] mr-1"></i>Completed</span>
+            {% endif %}
+        </div>
+        <div class="absolute bottom-0 left-0 right-0 p-4 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500 z-20">
+            <h3 class="font-serif font-bold text-white text-lg leading-tight mb-2 drop-shadow-lg line-clamp-2 group-hover:text-turkish-gold transition-colors duration-300">{{ series.title }}</h3>
+            <div class="flex items-center gap-2 text-xs text-gray-300 font-medium">
+                <span class="text-turkish-gold font-bold">{{ series.year }}</span>
+                <span class="text-gray-600">•</span>
+                <span class="text-gray-400">{{ series.seasons_count | default(value=0) }} Seasons</span>
+            </div>
+        </div>
+    </div>
+</a>

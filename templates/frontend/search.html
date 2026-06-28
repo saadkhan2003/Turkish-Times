@@ -1,0 +1,34 @@
+{% extends "frontend/layouts/app.html" %}
+{% block title %}Search Results - Turkish Times{% endblock %}
+{% block content %}
+<div class="pt-32 pb-12 bg-gradient-to-b from-turkish-charcoal to-[#050507]">
+    <div class="container mx-auto px-4 text-center">
+        <h1 class="text-3xl md:text-4xl font-bold text-white mb-8 font-serif">Search Results</h1>
+        <div class="max-w-2xl mx-auto relative">
+            <form action="/search" method="GET" class="relative group">
+                <input type="text" name="q" value="{{ query }}" placeholder="Search for series..."
+                       class="w-full bg-turkish-dark/50 border border-white/10 rounded-full py-4 pl-6 pr-14 text-white placeholder-gray-500 focus:outline-none focus:border-turkish-red/50 focus:ring-1 focus:ring-turkish-red/50 transition-all shadow-lg group-hover:bg-turkish-dark/80">
+                <button type="submit" class="absolute right-2 top-2 w-10 h-10 bg-turkish-red text-white rounded-full hover:bg-red-700 transition flex items-center justify-center shadow-lg"><i class="fas fa-search"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="container mx-auto px-4 py-12 min-h-[50vh]">
+    {% if series | length > 0 %}
+    <div class="flex items-center justify-between mb-8">
+        <p class="text-gray-400">Found <span class="text-white font-bold">{{ series | length }}</span> results for "<span class="text-turkish-gold">{{ query }}</span>"</p>
+    </div>
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6">
+        {% for series in series %}
+        {% include "frontend/components/series-card.html" %}
+        {% endfor %}
+    </div>
+    {% elif query != "" %}
+    <div class="text-center py-16">
+        <i class="fas fa-search text-5xl text-gray-600 mb-4"></i>
+        <h3 class="text-xl font-medium mb-2">No Results Found</h3>
+        <p class="text-gray-400">No series matched "{{ query }}". Try a different search term.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

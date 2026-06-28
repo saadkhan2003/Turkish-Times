@@ -1,0 +1,104 @@
+{% extends "frontend/layouts/app.html" %}
+{% block title %}{{ episode.title }} - {{ series.title }} - Turkish Times{% endblock %}
+{% block content %}
+<section class="py-8">
+    <div class="container mx-auto px-4">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-2">
+                <nav class="text-sm text-gray-400 mb-4">
+                    <a href="/" class="hover:text-white">Home</a>
+                    <span class="mx-2">/</span>
+                    <a href="/series/{{ series.slug }}" class="hover:text-white">{{ series.title }}</a>
+                    <span class="mx-2">/</span>
+                    <span class="text-white">S{{ season.season_number }} E{{ episode.episode_number }}</span>
+                </nav>
+                <div class="relative rounded-xl overflow-hidden bg-black mb-6 shadow-2xl ring-1 ring-white/10">
+                    {% if episode.video_source_primary %}
+                    <video id="player" playsinline controls data-poster="{% if episode.thumbnail %}{{ app_url }}/uploads/thumbnails/{{ episode.thumbnail }}{% elif series.thumbnail %}{{ app_url }}/uploads/thumbnails/{{ series.thumbnail }}{% endif %}">
+                        <source src="{{ episode.video_source_primary }}">
+                        {% if episode.video_source_backup %}
+                        <source src="{{ episode.video_source_backup }}">
+                        {% endif %}
+                        {% for sub in subtitles %}
+                        <track kind="captions" label="{{ sub.label }}" srclang="{{ sub.language }}" src="{{ app_url }}/uploads/subtitles/{{ sub.file_path }}"{% if sub.is_default %} default{% endif %}>
+                        {% endfor %}
+                    </video>
+                    {% else %}
+                    <div class="aspect-video flex items-center justify-center bg-turkish-gray">
+                        <div class="text-center"><i class="fas fa-video-slash text-4xl text-gray-600 mb-3"></i><p class="text-gray-400">Video not available</p></div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="grid grid-cols-3 items-center gap-2 mb-6">
+                    <div class="flex justify-start">
+                        {% if prev_episode %}
+                        <a href="/watch/{{ prev_episode.id }}" class="flex items-center gap-2 px-3 sm:px-4 py-3 bg-turkish-gray rounded-lg hover:bg-turkish-red transition group w-fit">
+                            <i class="fas fa-chevron-left group-hover:-translate-x-1 transition-transform"></i>
+                            <span class="hidden sm:inline font-medium">Previous</span>
+                        </a>
+                        {% endif %}
+                    </div>
+                    <div class="flex justify-center">
+                        {% if episode.download_link or episode.download_720p or episode.download_480p or episode.download_bluray %}
+                        <div class="relative group z-50">
+                            <button class="flex items-center gap-2 px-4 sm:px-6 py-3 bg-white/10 backdrop-blur-md border border-white/10 rounded-lg hover:bg-white/20 transition font-medium text-white whitespace-nowrap">
+                                <i class="fas fa-download"></i><span class="hidden sm:inline">Download</span><i class="fas fa-chevron-down text-xs ml-1 transition-transform group-hover:rotate-180"></i>
+                            </button>
+                            <div class="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-48 bg-[#1a1a1a] border border-white/10 rounded-xl shadow-xl overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top">
+                                <div class="p-1">
+                                    {% if episode.download_bluray %}<a href="{{ episode.download_bluray }}" target="_blank" class="flex items-center justify-between px-4 py-2.5 text-sm text-gray-300 hover:bg-white/10 hover:text-white rounded-lg transition"><span>Blu-Ray</span><i class="fas fa-compact-disc text-blue-400"></i></a>{% endif %}
+                                    {% if episode.download_link %}<a href="{{ episode.download_link }}" target="_blank" class="flex items-center justify-between px-4 py-2.5 text-sm text-gray-300 hover:bg-white/10 hover:text-white rounded-lg transition"><span>1080p</span><i class="fas fa-file-video text-red-400"></i></a>{% endif %}
+                                    {% if episode.download_720p %}<a href="{{ episode.download_720p }}" target="_blank" class="flex items-center justify-between px-4 py-2.5 text-sm text-gray-300 hover:bg-white/10 hover:text-white rounded-lg transition"><span>720p</span><i class="fas fa-file-video text-gray-500"></i></a>{% endif %}
+                                    {% if episode.download_480p %}<a href="{{ episode.download_480p }}" target="_blank" class="flex items-center justify-between px-4 py-2.5 text-sm text-gray-300 hover:bg-white/10 hover:text-white rounded-lg transition"><span>480p</span><i class="fas fa-file-video text-gray-600"></i></a>{% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="flex justify-end">
+                        {% if next_episode %}
+                        <a href="/watch/{{ next_episode.id }}" class="flex items-center gap-2 px-3 sm:px-4 py-3 bg-turkish-gray rounded-lg hover:bg-turkish-red transition group w-fit">
+                            <span class="hidden sm:inline font-medium">Next</span>
+                            <i class="fas fa-chevron-right group-hover:translate-x-1 transition-transform"></i>
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="glass rounded-xl p-6 mb-6">
+                    <h1 class="text-2xl font-bold mb-2">{{ episode.title }}</h1>
+                    <p class="text-gray-400 mb-4">{{ series.title }} • Season {{ season.season_number }} • Episode {{ episode.episode_number }}</p>
+                    <div class="flex flex-wrap items-center gap-4 text-sm text-gray-400 mb-4">
+                        {% if episode.duration %}<span><i class="fas fa-clock mr-2"></i>{{ episode.duration }} min</span>{% endif %}
+                        <span><i class="fas fa-eye mr-2"></i>{{ episode.views | default(value=0) }} views</span>
+                        <span><i class="fas fa-closed-captioning mr-2"></i>{{ subtitles | length }} subtitles</span>
+                    </div>
+                    {% if episode.description %}<p class="text-gray-300 leading-relaxed">{{ episode.description }}</p>{% endif %}
+                </div>
+            </div>
+            <div class="lg:col-span-1">
+                <div class="glass rounded-xl p-4 sticky top-20">
+                    <h3 class="font-semibold mb-4">Season {{ season.season_number }} Episodes</h3>
+                    <div class="space-y-2 max-h-[60vh] overflow-y-auto">
+                        {% for ep in all_episodes %}
+                        <a href="/watch/{{ ep.id }}" class="flex items-center gap-3 p-3 rounded-lg transition {% if ep.id == episode.id %}bg-turkish-red{% else %}bg-turkish-gray hover:bg-turkish-red/50{% endif %}">
+                            <span class="w-8 h-8 rounded-full bg-black/30 flex items-center justify-center text-sm font-medium flex-shrink-0">{{ ep.episode_number }}</span>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-medium truncate">{{ ep.title }}</p>
+                                {% if ep.duration %}<p class="text-xs text-gray-400">{{ ep.duration }} min</p>{% endif %}
+                            </div>
+                            {% if ep.id == episode.id %}<i class="fas fa-play text-xs"></i>{% endif %}
+                        </a>
+                        {% endfor %}
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-gray-700">
+                        <a href="/series/{{ series.slug }}" class="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition"><i class="fas fa-arrow-left"></i> Back to {{ series.title }}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script>document.addEventListener('DOMContentLoaded',function(){const p=new Plyr('#player',{captions:{active:true,update:true,language:'auto'},controls:['play-large','play','progress','current-time','duration','mute','volume','captions','settings','pip','airplay','fullscreen'],settings:['captions','quality','speed'],speed:{selected:1,options:[0.5,0.75,1,1.25,1.5,2]}})});</script>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "frontend/layouts/app.html" %}
+{% block title %}{{ series.title }} - Season {{ season.season_number }} - Turkish Times{% endblock %}
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold font-serif mb-2">{{ series.title }}</h1>
+    <h2 class="text-xl text-gray-400 mb-8">{{ season.title | default(value="Season " ~ season.season_number) }}</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {% for ep in episodes %}
+        <a href="/watch/{{ ep.id }}" class="glass-card p-4 rounded-lg hover:border-turkish-red transition border border-transparent">
+            <span class="text-turkish-gold text-sm">Episode {{ ep.episode_number }}</span>
+            <h3 class="font-semibold mt-1">{{ ep.title }}</h3>
+            {% if ep.duration %}<span class="text-xs text-gray-400">{{ ep.duration }} min</span>{% endif %}
+        </a>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

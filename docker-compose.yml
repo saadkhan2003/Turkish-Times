@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  turkish-times:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+      - APP_URL=http://your-domain.com
+      - SESSION_SECRET=${SESSION_SECRET:-change-this-to-a-random-secret}
+      - DATABASE_URL=sqlite:data/database.sqlite
+    volumes:
+      - ./data/database.sqlite:/app/data/database.sqlite
+      - ./public/uploads:/app/public/uploads
+    restart: unless-stopped

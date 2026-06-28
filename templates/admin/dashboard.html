@@ -1,0 +1,45 @@
+{% extends "admin/layouts/app.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="flex items-center justify-between mb-8">
+    <div>
+        <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Dashboard</h1>
+        <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Overview of your content</p>
+    </div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white dark:bg-turkish-dark p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+        <div class="flex items-center gap-4">
+            <div class="w-12 h-12 bg-red-100 dark:bg-red-900/30 rounded-lg flex items-center justify-center"><i class="fas fa-film text-red-600 dark:text-red-400 text-xl"></i></div>
+            <div><p class="text-sm text-gray-500 dark:text-gray-400">Series</p><p class="text-2xl font-bold text-gray-800 dark:text-white">{{ series_count }}</p></div>
+        </div>
+    </div>
+    <div class="bg-white dark:bg-turkish-dark p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+        <div class="flex items-center gap-4">
+            <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center"><i class="fas fa-layer-group text-blue-600 dark:text-blue-400 text-xl"></i></div>
+            <div><p class="text-sm text-gray-500 dark:text-gray-400">Seasons</p><p class="text-2xl font-bold text-gray-800 dark:text-white">{{ seasons_count }}</p></div>
+        </div>
+    </div>
+    <div class="bg-white dark:bg-turkish-dark p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+        <div class="flex items-center gap-4">
+            <div class="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center"><i class="fas fa-video text-green-600 dark:text-green-400 text-xl"></i></div>
+            <div><p class="text-sm text-gray-500 dark:text-gray-400">Episodes</p><p class="text-2xl font-bold text-gray-800 dark:text-white">{{ episodes_count }}</p></div>
+        </div>
+    </div>
+    <div class="bg-white dark:bg-turkish-dark p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+        <div class="flex items-center gap-4">
+            <div class="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center"><i class="fas fa-closed-captioning text-purple-600 dark:text-purple-400 text-xl"></i></div>
+            <div><p class="text-sm text-gray-500 dark:text-gray-400">Subtitles</p><p class="text-2xl font-bold text-gray-800 dark:text-white">{{ subtitles_count }}</p></div>
+        </div>
+    </div>
+</div>
+<div class="mt-8 bg-white dark:bg-turkish-dark rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+    <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Quick Actions</h3>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <a href="/admin/series/create" class="flex flex-col items-center gap-2 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition"><i class="fas fa-plus-circle text-2xl text-red-600"></i><span class="text-sm font-medium text-gray-700 dark:text-gray-300">Add Series</span></a>
+        <a href="/admin/seasons/create" class="flex flex-col items-center gap-2 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition"><i class="fas fa-folder-plus text-2xl text-blue-500"></i><span class="text-sm font-medium text-gray-700 dark:text-gray-300">Add Season</span></a>
+        <a href="/admin/episodes/create" class="flex flex-col items-center gap-2 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition"><i class="fas fa-video text-2xl text-green-500"></i><span class="text-sm font-medium text-gray-700 dark:text-gray-300">Add Episode</span></a>
+        <a href="/admin/subtitles/create" class="flex flex-col items-center gap-2 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition"><i class="fas fa-closed-captioning text-2xl text-purple-500"></i><span class="text-sm font-medium text-gray-700 dark:text-gray-300">Add Subtitle</span></a>
+    </div>
+</div>
+{% endblock %}

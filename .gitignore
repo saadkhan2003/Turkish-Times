@@ -1,0 +1,17 @@
+target/
+.env
+*.swp
+*.swo
+*~
+.DS_Store
+data/*.sqlite
+public/uploads/thumbnails/*
+public/uploads/backdrops/*
+public/uploads/settings/*
+public/uploads/subtitles/*
+public/uploads/videos/*
+!public/uploads/thumbnails/.gitkeep
+!public/uploads/backdrops/.gitkeep
+!public/uploads/settings/.gitkeep
+!public/uploads/subtitles/.gitkeep
+!public/uploads/videos/.gitkeep
